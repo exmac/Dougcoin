@@ -1,0 +1,373 @@
+--- bitcoinrpc.cpp	Thu Dec 05 13:11:26 2013
++++ bitcoinrpc.cpp	Tue Dec 31 02:25:11 2013
+@@ -417,7 +417,7 @@
+ int ReadHTTPHeaders(std::basic_istream<char>& stream, map<string, string>& mapHeadersRet)
+ {
+     int nLen = 0;
+-    loop
++    while (true)
+     {
+         string str;
+         std::getline(stream, str);
+--- main.cpp	Thu Dec 05 13:11:26 2013
++++ main.cpp	Tue Dec 31 02:25:11 2013
+@@ -4551,7 +4551,7 @@
+     CReserveKey reservekey(pwallet);
+     unsigned int nExtraNonce = 0;
+ 
+-    try { loop {
++    try { while (true) {
+         while (vNodes.empty())
+             MilliSleep(1000);
+ 
+@@ -4591,7 +4591,7 @@
+         uint256 hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
+         uint256 hashbuf[2];
+         uint256& hash = *alignup<16>(hashbuf);
+-        loop
++        while (true)
+         {
+             unsigned int nHashesDone = 0;
+             unsigned int nNonceFound;
+--- net.cpp	Thu Dec 05 13:11:26 2013
++++ net.cpp	Tue Dec 31 02:25:11 2013
+@@ -135,7 +135,7 @@
+ bool RecvLine(SOCKET hSocket, string& strLine)
+ {
+     strLine = "";
+-    loop
++    while (true)
+     {
+         char c;
+         int nBytes = recv(hSocket, &c, 1, 0);
+@@ -307,7 +307,7 @@
+     {
+         if (strLine.empty()) // HTTP response is separated from headers by blank line
+         {
+-            loop
++            while (true)
+             {
+                 if (!RecvLine(hSocket, strLine))
+                 {
+@@ -750,7 +750,7 @@
+ void ThreadSocketHandler()
+ {
+     unsigned int nPrevNodeCount = 0;
+-    loop
++    while (true)
+     {
+         //
+         // Disconnect nodes
+@@ -1114,7 +1114,7 @@
+         string strDesc = "Bitcoin " + FormatFullVersion();
+ 
+         try {
+-            loop {
++            while (true) {
+ #ifndef UPNPDISCOVER_SUCCESS
+                 /* miniupnpc 1.5 */
+                 r = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype,
+@@ -1378,7 +1378,7 @@
+ 
+     // Initiate network connections
+     int64 nStart = GetTime();
+-    loop
++    while (true)
+     {
+         ProcessOneShot();
+ 
+@@ -1429,7 +1429,7 @@
+         int64 nANow = GetAdjustedTime();
+ 
+         int nTries = 0;
+-        loop
++        while (true)
+         {
+             // use an nUnkBias between 10 (no outgoing connections) and 90 (8 outgoing connections)
+             CAddress addr = addrman.Select(10 + min(nOutbound,8)*10);
+--- script.cpp	Thu Dec 05 13:11:26 2013
++++ script.cpp	Tue Dec 31 02:25:11 2013
+@@ -1163,7 +1163,7 @@
+         // Compare
+         CScript::const_iterator pc1 = script1.begin();
+         CScript::const_iterator pc2 = script2.begin();
+-        loop
++        while (true)
+         {
+             if (pc1 == script1.end() && pc2 == script2.end())
+             {
+--- util.cpp	Thu Dec 05 13:11:26 2013
++++ util.cpp	Tue Dec 31 02:25:11 2013
+@@ -311,7 +311,7 @@
+     char* p = buffer;
+     int limit = sizeof(buffer);
+     int ret;
+-    loop
++    while (true)
+     {
+         va_list arg_ptr;
+         va_copy(arg_ptr, ap);
+@@ -371,7 +371,7 @@
+         return;
+     string::size_type i1 = 0;
+     string::size_type i2;
+-    loop
++    while (true)
+     {
+         i2 = str.find(c, i1);
+         if (i2 == str.npos)
+@@ -500,7 +500,7 @@
+ {
+     // convert hex dump to vector
+     vector<unsigned char> vch;
+-    loop
++    while (true)
+     {
+         while (isspace(*psz))
+             psz++;
+@@ -954,7 +954,7 @@
+ 
+ bool WildcardMatch(const char* psz, const char* mask)
+ {
+-    loop
++    while (true)
+     {
+         switch (*mask)
+         {
+--- util.h	Thu Dec 05 13:11:26 2013
++++ util.h	Tue Dec 31 02:25:11 2013
+@@ -37,7 +37,6 @@
+ static const int64 COIN = 100000000;
+ static const int64 CENT = 1000000;
+ 
+-#define loop                for (;;)
+ #define BEGIN(a)            ((char*)&(a))
+ #define END(a)              ((char*)&((&(a))[1]))
+ #define UBEGIN(a)           ((unsigned char*)&(a))
+--- wallet.cpp	Thu Dec 05 13:11:26 2013
++++ wallet.cpp	Tue Dec 31 02:25:11 2013
+@@ -1173,7 +1173,7 @@
+         LOCK2(cs_main, cs_wallet);
+         {
+             nFeeRet = nTransactionFee;
+-            loop
++            while (true)
+             {
+                 wtxNew.vin.clear();
+                 wtxNew.vout.clear();
+--- walletdb.cpp	Thu Dec 05 13:11:26 2013
++++ walletdb.cpp	Tue Dec 31 02:25:11 2013
+@@ -73,7 +73,7 @@
+     if (!pcursor)
+         throw runtime_error("CWalletDB::ListAccountCreditDebit() : cannot create DB cursor");
+     unsigned int fFlags = DB_SET_RANGE;
+-    loop
++    while (true)
+     {
+         // Read next record
+         CDataStream ssKey(SER_DISK, CLIENT_VERSION);
+@@ -415,7 +415,7 @@
+             return DB_CORRUPT;
+         }
+ 
+-        loop
++        while (true)
+         {
+             // Read next record
+             CDataStream ssKey(SER_DISK, CLIENT_VERSION);
+--- qt/addressbookpage.cpp	Thu Dec 05 13:11:26 2013
++++ qt/addressbookpage.cpp	Tue Dec 31 02:25:11 2013
+@@ -143,8 +143,13 @@
+     ui->tableView->sortByColumn(0, Qt::AscendingOrder);
+ 
+     // Set column widths
++#if QT_VERSION < 0x050000
+     ui->tableView->horizontalHeader()->setResizeMode(AddressTableModel::Label, QHeaderView::Stretch);
+     ui->tableView->horizontalHeader()->setResizeMode(AddressTableModel::Address, QHeaderView::ResizeToContents);
++#else
++    ui->tableView->horizontalHeader()->setSectionResizeMode(AddressTableModel::Label, QHeaderView::Stretch);
++    ui->tableView->horizontalHeader()->setSectionResizeMode(AddressTableModel::Address, QHeaderView::ResizeToContents);
++#endif
+ 
+     connect(ui->tableView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+             this, SLOT(selectionChanged()));
+--- qt/bitcoin.cpp	Thu Dec 05 13:11:26 2013
++++ qt/bitcoin.cpp	Tue Dec 31 02:25:11 2013
+@@ -17,7 +17,9 @@
+ #include "splashscreen.h"
+ 
+ #include <QMessageBox>
++#if QT_VERSION < 0x050000
+ #include <QTextCodec>
++#endif
+ #include <QLocale>
+ #include <QTimer>
+ #include <QTranslator>
+@@ -118,9 +120,11 @@
+     // Command-line options take precedence:
+     ParseParameters(argc, argv);
+ 
++#if QT_VERSION < 0x050000
+     // Internal string conversion is all UTF-8
+     QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
+     QTextCodec::setCodecForCStrings(QTextCodec::codecForTr());
++#endif
+ 
+     Q_INIT_RESOURCE(bitcoin);
+     QApplication app(argc, argv);
+--- qt/bitcoingui.cpp	Thu Dec 05 13:11:26 2013
++++ qt/bitcoingui.cpp	Tue Dec 31 02:25:11 2013
+@@ -44,7 +44,9 @@
+ #include <QMovie>
+ #include <QTimer>
+ #include <QDragEnterEvent>
++#if QT_VERSION < 0x050000
+ #include <QUrl>
++#endif
+ #include <QMimeData>
+ #include <QStyle>
+ #include <QSettings>
+--- qt/guiutil.cpp	Thu Dec 05 13:11:26 2013
++++ qt/guiutil.cpp	Tue Dec 31 02:25:11 2013
+@@ -13,8 +13,12 @@
+ #include <QDoubleValidator>
+ #include <QFont>
+ #include <QLineEdit>
++#if QT_VERSION >= 0x050000
++#include <QUrlQuery>
++#else
+ #include <QUrl>
+-#include <QTextDocument> // For Qt::escape
++#endif
++#include <QTextDocument> // for Qt::mightBeRichText
+ #include <QAbstractItemView>
+ #include <QClipboard>
+ #include <QFileDialog>
+@@ -86,7 +90,13 @@
+     SendCoinsRecipient rv;
+     rv.address = uri.path();
+     rv.amount = 0;
++	
++#if QT_VERSION < 0x050000
+     QList<QPair<QString, QString> > items = uri.queryItems();
++#else
++    QUrlQuery uriQuery(uri);
++    QList<QPair<QString, QString> > items = uriQuery.queryItems();
++#endif
+     for (QList<QPair<QString, QString> >::iterator i = items.begin(); i != items.end(); i++)
+     {
+         bool fShouldReturnFalse = false;
+@@ -139,7 +149,11 @@
+ 
+ QString HtmlEscape(const QString& str, bool fMultiLine)
+ {
++#if QT_VERSION < 0x050000
+     QString escaped = Qt::escape(str);
++#else
++    QString escaped = str.toHtmlEscaped();
++#endif
+     if(fMultiLine)
+     {
+         escaped = escaped.replace("\n", "<br>\n");
+@@ -176,7 +190,11 @@
+     QString myDir;
+     if(dir.isEmpty()) // Default to user documents location
+     {
++#if QT_VERSION < 0x050000
+         myDir = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
++#else
++        myDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
++#endif
+     }
+     else
+     {
+--- qt/paymentserver.cpp	Thu Dec 05 13:11:26 2013
++++ qt/paymentserver.cpp	Tue Dec 31 02:25:11 2013
+@@ -18,7 +18,9 @@
+ #include <QLocalServer>
+ #include <QLocalSocket>
+ #include <QStringList>
++#if QT_VERSION < 0x050000
+ #include <QUrl>
++#endif
+ 
+ using namespace boost;
+ 
+--- qt/qrcodedialog.cpp	Thu Dec 05 13:11:26 2013
++++ qt/qrcodedialog.cpp	Tue Dec 31 02:25:11 2013
+@@ -7,7 +7,9 @@
+ #include "optionsmodel.h"
+ 
+ #include <QPixmap>
++#if QT_VERSION < 0x050000
+ #include <QUrl>
++#endif
+ 
+ #include <qrencode.h>
+ 
+--- qt/rpcconsole.cpp	Thu Dec 05 13:11:26 2013
++++ qt/rpcconsole.cpp	Tue Dec 31 02:25:11 2013
+@@ -8,7 +8,9 @@
+ #include <QTime>
+ #include <QThread>
+ #include <QKeyEvent>
++#if QT_VERSION < 0x050000
+ #include <QUrl>
++#endif
+ #include <QScrollBar>
+ 
+ #include <openssl/crypto.h>
+--- qt/sendcoinsdialog.cpp	Thu Dec 05 13:11:26 2013
++++ qt/sendcoinsdialog.cpp	Tue Dec 31 02:25:11 2013
+@@ -93,7 +93,11 @@
+     QStringList formatted;
+     foreach(const SendCoinsRecipient &rcp, recipients)
+     {
++#if QT_VERSION < 0x050000
+         formatted.append(tr("<b>%1</b> to %2 (%3)").arg(BitcoinUnits::formatWithUnit(BitcoinUnits::BTC, rcp.amount), Qt::escape(rcp.label), rcp.address));
++#else
++        formatted.append(tr("<b>%1</b> to %2 (%3)").arg(BitcoinUnits::formatWithUnit(BitcoinUnits::BTC, rcp.amount), rcp.label.toHtmlEscaped(), rcp.address));
++#endif
+     }
+ 
+     fNewRecipientAllowed = false;
+--- qt/transactionview.cpp	Thu Dec 05 13:11:26 2013
++++ qt/transactionview.cpp	Tue Dec 31 02:25:11 2013
+@@ -176,7 +176,11 @@
+         transactionView->horizontalHeader()->resizeSection(TransactionTableModel::Status, 23);
+         transactionView->horizontalHeader()->resizeSection(TransactionTableModel::Date, 120);
+         transactionView->horizontalHeader()->resizeSection(TransactionTableModel::Type, 120);
++#if QT_VERSION < 0x050000
+         transactionView->horizontalHeader()->setResizeMode(TransactionTableModel::ToAddress, QHeaderView::Stretch);
++#else
++        transactionView->horizontalHeader()->setSectionResizeMode(TransactionTableModel::ToAddress, QHeaderView::Stretch);
++#endif
+         transactionView->horizontalHeader()->resizeSection(TransactionTableModel::Amount, 100);
+     }
+ }
+--- qt/walletview.cpp	Thu Dec 05 13:11:26 2013
++++ qt/walletview.cpp	Tue Dec 31 02:25:11 2013
+@@ -21,7 +21,11 @@
+ #include <QHBoxLayout>
+ #include <QVBoxLayout>
+ #include <QAction>
++#if QT_VERSION < 0x050000
+ #include <QDesktopServices>
++#else
++#include <QStandardPaths>
++#endif
+ #include <QFileDialog>
+ #include <QPushButton>
+ 
+@@ -233,7 +237,11 @@
+ 
+ void WalletView::backupWallet()
+ {
++#if QT_VERSION < 0x050000
+     QString saveDir = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
++#else
++    QString saveDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
++#endif
+     QString filename = QFileDialog::getSaveFileName(this, tr("Backup Wallet"), saveDir, tr("Wallet Data (*.dat)"));
+     if (!filename.isEmpty()) {
+         if (!walletModel->backupWallet(filename)) {
