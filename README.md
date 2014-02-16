@@ -1,4 +1,4 @@
-Dougcoin 0.2 BETA
+Dougcoin 0.3 BETA
 ====================
 
 Copyright (c) 2009-2013 Bitcoin Developers
